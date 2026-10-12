@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "productive-agent"
+version = "0.1.0"
+description = "AI-powered personal productivity assistant with email, task, and interview prep agents"
+requires-python = ">=3.11"
+
+dependencies = [
+    "langchain>=0.3",
+    "langchain-openai>=0.3",
+    "langchain-community>=0.3",
+    "langchain-huggingface>=0.1",
+    "langchain-text-splitters>=0.3",
+    "langgraph>=0.3",
+    "python-dotenv>=1.0",
+    "google-api-python-client>=2.100",
+    "google-auth-oauthlib>=1.1",
+    "google-auth-httplib2>=0.2",
+    "pymupdf>=1.23",
+    "python-docx>=1.1",
+    "tavily-python>=0.3",
+    "streamlit>=1.35",
+    "tzdata>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

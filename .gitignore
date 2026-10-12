@@ -1,0 +1,53 @@
+# ── Data (SQLite databases, user preferences) ────────────────────────────────
+data/*
+!data/.gitkeep
+
+# ── Secrets & credentials ────────────────────────────────────────────────────
+.env
+credentials/*
+!credentials/.gitkeep
+
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ── Testing & coverage ────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Streamlit ────────────────────────────────────────────────────────────────
+.streamlit/
+
+# ── Temporary uploads ────────────────────────────────────────────────────────
+.kb_uploads/
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Legacy token files (now live in credentials/) ────────────────────────────
+agent/token.json
+agent/token_calendar.json
+agent/credentials.json
+agent/*.db

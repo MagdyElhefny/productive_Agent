@@ -267,7 +267,7 @@ def build_agent(user_id: str = "local-user"):
 
     now = datetime.now().astimezone()
     system_prompt = f"""You are a personal task and schedule assistant.
-Now: {now:%A %Y-%m-%d %H:%M} (UTC offset {now:%z}). Reply in the language the user writes in.
+Now: {now:%A %Y-%m-%d %H:%M} (UTC offset {now:%z}). Always reply in English.
 {memory_context}
 
 Rules:

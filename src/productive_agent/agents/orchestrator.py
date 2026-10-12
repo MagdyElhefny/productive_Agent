@@ -214,7 +214,7 @@ def build_main_agent(user_id: str = "local-user",
     today = date.today().isoformat()
 
     system_prompt = f"""You are a smart personal productivity assistant.
-Today is {today}. Reply in the language the user writes in.
+Today is {today}. Always reply in English.
 {memory_context}
 
 You coordinate four specialist agents and a web search tool to fulfill complex requests.

@@ -171,45 +171,81 @@ def get_email(message_id: str) -> str:
 def create_reply_draft(message_id: str, reply_body: str) -> str:
     """Create a Gmail DRAFT reply (in the same thread) to the given message.
     This does NOT send anything. Returns the draft_id and a preview.
+    Use this when replying to an existing email.
+    For new emails (not replies), use create_new_draft instead.
     """
-    service = get_gmail_service()
-    orig = (
-        service.users()
-        .messages()
-        .get(
-            userId="me",
-            id=message_id,
-            format="metadata",
-            metadataHeaders=["From", "Reply-To", "Subject", "Message-ID", "References"],
+    try:
+        service = get_gmail_service()
+        orig = (
+            service.users()
+            .messages()
+            .get(
+                userId="me",
+                id=message_id,
+                format="metadata",
+                metadataHeaders=["From", "Reply-To", "Subject", "Message-ID", "References"],
+            )
+            .execute()
         )
-        .execute()
-    )
-    h = _headers(orig)
-    to = h.get("reply-to") or h.get("from")
-    subject = h.get("subject", "")
-    if not subject.lower().startswith("re:"):
-        subject = f"Re: {subject}"
-    mime = MIMEText(reply_body, "plain", "utf-8")
-    mime["To"] = to
-    mime["Subject"] = subject
-    msg_id = h.get("message-id")
-    if msg_id:
-        mime["In-Reply-To"] = msg_id
-        mime["References"] = f"{h.get('references', '')} {msg_id}".strip()
-    raw = base64.urlsafe_b64encode(mime.as_bytes()).decode()
-    draft = (
-        service.users()
-        .drafts()
-        .create(
-            userId="me",
-            body={"message": {"raw": raw, "threadId": orig.get("threadId")}},
+        h = _headers(orig)
+        to = h.get("reply-to") or h.get("from")
+        subject = h.get("subject", "")
+        if not subject.lower().startswith("re:"):
+            subject = f"Re: {subject}"
+        mime = MIMEText(reply_body, "plain", "utf-8")
+        mime["To"] = to
+        mime["Subject"] = subject
+        msg_id = h.get("message-id")
+        if msg_id:
+            mime["In-Reply-To"] = msg_id
+            mime["References"] = f"{h.get('references', '')} {msg_id}".strip()
+        raw = base64.urlsafe_b64encode(mime.as_bytes()).decode()
+        draft = (
+            service.users()
+            .drafts()
+            .create(
+                userId="me",
+                body={"message": {"raw": raw, "threadId": orig.get("threadId")}},
+            )
+            .execute()
         )
-        .execute()
-    )
-    return (
-        f"Draft created. draft_id: {draft['id']}\n"
-        f"To: {to}\nSubject: {subject}\n\n{reply_body}"
-    )
+        return (
+            f"Reply draft created and saved to Gmail Drafts.\n"
+            f"draft_id: {draft['id']}\n"
+            f"To: {to}\nSubject: {subject}\n\n"
+            f"Preview:\n{reply_body[:500]}"
+        )
+    except Exception as e:
+        return f"Failed to create reply draft: {e}"
+
+
+@tool
+def create_new_draft(to: str, subject: str, body: str) -> str:
+    """Create a brand-new Gmail DRAFT (not a reply) to any recipient.
+    Use this when composing a new email from scratch.
+    This does NOT send anything — saves to Gmail Drafts only.
+    Returns the draft_id and a preview.
+    """
+    try:
+        service = get_gmail_service()
+        mime = MIMEText(body, "plain", "utf-8")
+        mime["To"] = to
+        mime["Subject"] = subject
+        raw = base64.urlsafe_b64encode(mime.as_bytes()).decode()
+        draft = (
+            service.users()
+            .drafts()
+            .create(userId="me", body={"message": {"raw": raw}})
+            .execute()
+        )
+        return (
+            f"New email draft saved to Gmail Drafts.\n"
+            f"draft_id: {draft['id']}\n"
+            f"To: {to}\nSubject: {subject}\n\n"
+            f"Preview:\n{body[:500]}"
+        )
+    except Exception as e:
+        return f"Failed to create draft: {e}"
 
 
 def draft_preview(draft_id: str):

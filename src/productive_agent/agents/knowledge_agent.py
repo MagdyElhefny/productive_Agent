@@ -147,7 +147,7 @@ Rules:
 - If the user asks to "summarize the whole document", call search_documents multiple times
   with different broad queries to cover all sections, then synthesize a full summary.
 - Use remember_fact to save any important user preferences mentioned in conversation.
-- Reply in the same language the user writes in."""
+- Always reply in English."""
 
     return create_agent(
         model=model,
